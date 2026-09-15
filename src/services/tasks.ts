@@ -16,9 +16,18 @@ export interface TasksPage {
     page: number
     limit: number
     total: number
+    totalStatuses: number
     totalPages: number
   }
 }
+
+export interface CreateTaskInput {
+  title: string
+  description: string | null
+  status: string
+}
+
+export type UpdateTaskInput = Partial<Pick<Task, 'title' | 'description' | 'status'>>
 
 export class SessionExpiredError extends Error {
   constructor() {
@@ -54,6 +63,7 @@ export async function getTasks(page: number, signal: AbortSignal): Promise<Tasks
       || !Number.isInteger(result?.pagination?.page) || result.pagination.page < 1
       || !Number.isInteger(result?.pagination?.limit) || result.pagination.limit < 1
       || !Number.isInteger(result?.pagination?.total) || result.pagination.total < 0
+      || !Number.isInteger(result?.pagination?.totalStatuses) || result.pagination.totalStatuses < 0
       || !Number.isInteger(result?.pagination?.totalPages) || result.pagination.totalPages < 0) {
       throw new Error('Não foi possível ler suas tarefas. Tente novamente.')
     }
@@ -67,7 +77,11 @@ export async function getTasks(page: number, signal: AbortSignal): Promise<Tasks
   }
 }
 
-export async function updateTaskStatus(taskId: string, status: string, signal: AbortSignal): Promise<Task> {
+export function updateTaskStatus(taskId: string, status: string, signal: AbortSignal): Promise<Task> {
+  return updateTask(taskId, { status }, signal)
+}
+
+export async function updateTask(taskId: string, input: UpdateTaskInput, signal: AbortSignal): Promise<Task> {
   const timeout = AbortSignal.timeout(15_000)
 
   try {
@@ -75,7 +89,7 @@ export async function updateTaskStatus(taskId: string, status: string, signal: A
       method: 'PATCH',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify(input),
       signal: AbortSignal.any([signal, timeout]),
     })
 
@@ -85,7 +99,8 @@ export async function updateTaskStatus(taskId: string, status: string, signal: A
     if (!response.ok) {
       throw new Error(result?.message || 'Não foi possível salvar esta tarefa. Tente novamente.')
     }
-    if (!isTask(result?.task) || result.task.id !== taskId || result.task.status !== status) {
+    if (!isTask(result?.task) || result.task.id !== taskId
+      || Object.entries(input).some(([field, value]) => result.task[field as keyof UpdateTaskInput] !== value)) {
       throw new Error('Não foi possível confirmar a alteração desta tarefa. Tente novamente.')
     }
 
@@ -94,6 +109,75 @@ export async function updateTaskStatus(taskId: string, status: string, signal: A
     if (signal.aborted) throw error
     if (timeout.aborted) throw new Error('A conexão demorou um pouco. Tente salvar novamente.', { cause: error })
     if (error instanceof TypeError) throw new Error('Não conseguimos conectar. Suas alterações continuam pendentes.', { cause: error })
+    throw error
+  }
+}
+
+export async function deleteTask(taskId: string, signal: AbortSignal): Promise<void> {
+  const timeout = AbortSignal.timeout(15_000)
+
+  try {
+    const response = await fetch(`${apiUrl}/api/tasks/${encodeURIComponent(taskId)}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      signal: AbortSignal.any([signal, timeout]),
+    })
+
+    if (response.status === 401) throw new SessionExpiredError()
+    if (!response.ok) {
+      const result = await response.json().catch(() => null)
+      throw new Error(result?.message || 'Não foi possível excluir esta tarefa. Tente novamente.')
+    }
+  } catch (error) {
+    if (signal.aborted) throw error
+    if (timeout.aborted) throw new Error('A conexão demorou um pouco. Atualize o quadro antes de tentar excluir novamente.', { cause: error })
+    if (error instanceof TypeError) throw new Error('Não conseguimos confirmar a exclusão. Confira sua conexão e atualize o quadro antes de tentar novamente.', { cause: error })
+    throw error
+  }
+}
+
+export async function getTaskStatuses(signal: AbortSignal): Promise<string[]> {
+  const statuses = new Set<string>()
+  let totalPages = 1
+
+  for (let page = 1; page <= totalPages; page++) {
+    const result = await getTasks(page, signal)
+    totalPages = result.pagination.totalPages
+    for (const task of result.tasks) {
+      if (task.status.trim()) statuses.add(task.status)
+    }
+  }
+
+  return [...statuses].sort((a, b) => a.localeCompare(b, 'pt-BR'))
+}
+
+export async function createTask(input: CreateTaskInput, signal: AbortSignal): Promise<Task> {
+  const timeout = AbortSignal.timeout(15_000)
+
+  try {
+    const response = await fetch(apiUrl + '/api/tasks', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+      signal: AbortSignal.any([signal, timeout]),
+    })
+
+    if (response.status === 401) throw new SessionExpiredError()
+
+    const result = await response.json().catch(() => null)
+    if (!response.ok) {
+      throw new Error(result?.message || 'Não foi possível criar sua tarefa. Tente novamente.')
+    }
+    if (!isTask(result?.task)) {
+      throw new Error('Não foi possível confirmar a criação. Atualize o quadro antes de tentar novamente.')
+    }
+
+    return result.task
+  } catch (error) {
+    if (signal.aborted) throw error
+    if (timeout.aborted) throw new Error('A conexão demorou um pouco. Atualize o quadro antes de tentar criar novamente.', { cause: error })
+    if (error instanceof TypeError) throw new Error('Não conseguimos confirmar a criação. Confira sua conexão e atualize o quadro antes de tentar novamente.', { cause: error })
     throw error
   }
 }

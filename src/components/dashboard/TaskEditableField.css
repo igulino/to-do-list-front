@@ -1,0 +1,35 @@
+.task-editable-field { display: flex; align-items: flex-start; gap: 4px; min-width: 0; }
+.task-card-heading > .task-title-field { flex: 1; }
+.task-editable-field > h4, .task-editable-field > .task-description { flex: 1; min-width: 0; }
+.task-description-field { margin-top: 9px; }
+.task-description-field > .task-description { margin-top: 0; }
+.task-edit-button { display: grid; place-items: center; flex-shrink: 0; width: 24px; height: 26px; padding: 0; margin-top: -2px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: #7898a7; transition: opacity .18s, background .18s, color .18s; }
+.task-edit-button svg { width: 13px; height: 13px; }
+.task-edit-button:hover:not(:disabled), .task-edit-button:focus-visible { background: #eaf4f8; color: #315f74; border-color: #cce1eb; }
+.task-edit-button:disabled { cursor: default; color: #b4c3cb; }
+.task-card-heading:has(.task-field-editor) > .task-card-actions { display: none; }
+.task-field-editor { width: 100%; min-width: 0; cursor: default; }
+.task-field-editor > label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: 600; color: #547587; }
+.task-field-editor input, .task-field-editor textarea { display: block; width: 100%; min-width: 0; min-height: 38px; padding: 8px 9px; border: 1px solid #afcfdc; border-radius: 7px; background: #fafdfe; color: #2d424e; font: inherit; font-size: 12px; line-height: 1.6; }
+.task-field-editor textarea { min-height: 100px; resize: vertical; }
+.task-field-editor input:focus-visible, .task-field-editor textarea:focus-visible { outline: 2px solid #68b4d1; outline-offset: 2px; }
+.task-field-editor [aria-invalid='true'] { border-color: #dfa498; background: #fffafa; }
+.task-field-editor input:disabled, .task-field-editor textarea:disabled { opacity: .65; }
+.task-field-error { margin-top: 8px; color: #a14f40; font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; }
+.task-field-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.task-field-actions button { display: flex; align-items: center; justify-content: center; gap: 4px; min-height: 32px; padding: 6px 8px; border: 1px solid #e1ebef; border-radius: 6px; background: #fff; color: #647f8e; font-size: 10px; font-weight: 600; }
+.task-field-actions button:hover:not(:disabled) { background: #f0f7fa; }
+.task-field-actions .task-field-save { border-color: #315f74; background: #315f74; color: #fff; }
+.task-field-actions .task-field-save:hover:not(:disabled) { background: #234d61; }
+.task-field-actions button:disabled { opacity: .6; }
+.task-field-actions svg { width: 13px; height: 13px; }
+@media (hover: hover) and (pointer: fine) {
+  .task-edit-button { opacity: 0; }
+  .task-editable-field:hover > .task-edit-button, .task-editable-field:focus-within > .task-edit-button { opacity: 1; }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .task-edit-button { width: 44px; height: 44px; margin-top: -8px; opacity: 1; }
+  .task-edit-button svg { width: 16px; height: 16px; }
+  .task-field-editor input, .task-field-editor textarea { min-height: 44px; font-size: 16px; }
+  .task-field-actions button { min-height: 44px; padding-inline: 10px; font-size: 11px; }
+}

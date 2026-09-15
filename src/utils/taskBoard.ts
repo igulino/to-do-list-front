@@ -26,7 +26,6 @@ export function groupTasks(tasks: Task[], statuses: string[], changes: ReadonlyM
 
 export function getBoardPagination(data: TasksPage | null): BoardPagination {
   const page = data?.pagination.page ?? 1
-  const firstTask = data && data.tasks.length ? (page - 1) * data.pagination.limit + 1 : 0
 
   return {
     hasData: data !== null,
@@ -34,8 +33,8 @@ export function getBoardPagination(data: TasksPage | null): BoardPagination {
     totalPages: Math.max(1, data?.pagination.totalPages ?? 1),
     total: data?.pagination.total ?? 0,
     taskCount: data?.tasks.length ?? 0,
-    firstTask,
-    lastTask: data && data.tasks.length ? firstTask + data.tasks.length - 1 : 0,
+    statusCount: new Set(data?.tasks.map(task => task.status) ?? []).size,
+    totalStatuses: data?.pagination.totalStatuses ?? 0,
   }
 }
 

@@ -8,10 +8,8 @@ interface BoardPaginationProps {
 }
 
 export default function BoardPagination({ pagination, disabled, onPageChange }: BoardPaginationProps) {
-  const { hasData, page, totalPages, total, firstTask, lastTask } = pagination
-  const summary = hasData
-    ? total === 0 ? 'Nenhuma tarefa por enquanto' : `Mostrando ${firstTask}–${lastTask} de ${total} tarefas`
-    : 'Seu dia, um passo de cada vez'
+  const { hasData, page, totalPages, total, taskCount, statusCount, totalStatuses } = pagination
+  const summary = hasData ? total === 0 ? 'Nenhuma tarefa por enquanto' : `${taskCount} de ${total} tarefas · ${statusCount} de ${totalStatuses} status` : 'Seu dia, um passo de cada vez'
 
   return <footer className="board-footer">
     <p>{summary}</p>

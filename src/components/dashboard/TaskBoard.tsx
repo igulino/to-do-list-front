@@ -1,4 +1,5 @@
 import type { Ref } from 'react'
+import type { TaskEditingHandlers } from '../../hooks/useTaskEditing'
 import type { TaskDragHandlers } from '../../hooks/useTaskDrag'
 import type { BoardPagination as Pagination, TaskGroup } from '../../types/taskBoard'
 import { Icon } from '../Icons'
@@ -14,14 +15,18 @@ interface TaskBoardProps {
   error: string | null
   disabled: boolean
   pendingTaskIds: ReadonlySet<string>
+  deletingTaskId: string | null
+  editing: TaskEditingHandlers
   moveAnnouncement: string
   boardRef: Ref<HTMLDivElement>
   drag: TaskDragHandlers
   onMoveTask: (taskId: string, status: string) => void
+  onDeleteTask: (taskId: string) => Promise<void>
   onLoadPage: (page: number) => void
+  onCreateTask: () => void
 }
 
-export default function TaskBoard({ groups, pagination, requestedPage, loading, error, disabled, pendingTaskIds, moveAnnouncement, boardRef, drag, onMoveTask, onLoadPage }: TaskBoardProps) {
+export default function TaskBoard({ groups, pagination, requestedPage, loading, error, disabled, pendingTaskIds, deletingTaskId, editing, moveAnnouncement, boardRef, drag, onMoveTask, onDeleteTask, onLoadPage, onCreateTask }: TaskBoardProps) {
   const { hasData, page, totalPages, total, taskCount } = pagination
   const statuses = groups.map(group => group.status)
   let content = null
@@ -36,9 +41,12 @@ export default function TaskBoard({ groups, pagination, requestedPage, loading, 
         headingId={`status-${index}`}
         statuses={statuses}
         pendingTaskIds={pendingTaskIds}
+        deletingTaskId={deletingTaskId}
+        editing={editing}
         disabled={disabled}
         drag={drag}
         onMoveTask={onMoveTask}
+        onDeleteTask={onDeleteTask}
       />)}
     </div>
   } else if (hasData && !error) {
@@ -53,9 +61,14 @@ export default function TaskBoard({ groups, pagination, requestedPage, loading, 
         <span className="board-symbol"><Icon name="board" /></span>
         <div><h2 id="board-heading">Minhas tarefas</h2><p>Cada passo no seu lugar.</p></div>
       </div>
-      <button className="refresh-button" type="button" aria-label="Atualizar tarefas" disabled={disabled} onClick={() => onLoadPage(page)}>
-        <Icon name="refresh" className={loading ? 'is-spinning' : ''} /><span>Atualizar</span>
-      </button>
+      <div className="board-actions">
+        <button className="refresh-button" type="button" aria-label="Atualizar tarefas" disabled={disabled} onClick={() => onLoadPage(page)}>
+          <Icon name="refresh" className={loading ? 'is-spinning' : ''} /><span>Atualizar</span>
+        </button>
+        <button className="create-task-button" type="button" disabled={disabled} onClick={onCreateTask} aria-haspopup="dialog">
+          <Icon name="plus" />Criar task
+        </button>
+      </div>
     </header>
 
     <div className="board-meta">

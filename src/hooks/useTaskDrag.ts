@@ -18,7 +18,7 @@ export default function useTaskDrag({ canDrag, onMoveTask }: UseTaskDragOptions)
   }
 
   function startDrag(event: DragEvent<HTMLLIElement>, taskId: string) {
-    if (!canDrag() || (event.target as HTMLElement).closest('select')) {
+    if (!canDrag() || (event.target as HTMLElement).closest('button, select, input, textarea, form')) {
       event.preventDefault()
       return
     }

@@ -17,8 +17,8 @@ export interface BoardPagination {
   totalPages: number
   total: number
   taskCount: number
-  firstTask: number
-  lastTask: number
+  statusCount: number
+  totalStatuses: number
 }
 
 export interface SaveFeedback {

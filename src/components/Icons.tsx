@@ -1,7 +1,11 @@
-type IconName = 'arrow' | 'eye' | 'eye-off' | 'lock' | 'check' | 'mail' | 'sparkle' | 'board' | 'chevron-left' | 'chevron-right' | 'refresh' | 'list' | 'alert' | 'grip'
+type IconName = 'arrow' | 'eye' | 'eye-off' | 'lock' | 'check' | 'mail' | 'sparkle' | 'board' | 'chevron-left' | 'chevron-right' | 'refresh' | 'list' | 'alert' | 'grip' | 'plus' | 'close' | 'trash' | 'pencil'
 
 export function Icon({ name, className = '' }: { name: IconName; className?: string }) {
   const paths: Record<IconName, React.ReactNode> = {
+    pencil: <><path d="m16 3 5 5M4 15 16.5 2.5a1.4 1.4 0 0 1 2 0l3 3a1.4 1.4 0 0 1 0 2L9 20l-6 1 1-6Z" /></>,
+    trash: <><path d="M3 6h18M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M5 6l1 14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l1-14M10 10v7M14 10v7" /></>,
+    plus: <path d="M12 5v14M5 12h14" />,
+    close: <path d="m6 6 12 12M6 18 18 6" />,
     arrow: <><path d="M5 12h14M13 6l6 6-6 6" /></>,
     eye: <><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></>,
     'eye-off': <><path d="m3 3 18 18M10.6 5.1 12 5c6.5 0 10 7 10 7a21 21 0 0 1-3.1 4.1M6.5 6.5A23 23 0 0 0 2 12s3.5 7 10 7c1.7 0 3.3-.5 4.6-1.2M10 10a2.8 2.8 0 0 0 4 4" /></>,

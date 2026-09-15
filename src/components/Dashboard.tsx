@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import type { User } from '../services/auth'
 import useTaskBoard from '../hooks/useTaskBoard'
 import BoardSavePanel from './dashboard/BoardSavePanel'
+import CreateTaskModal from './dashboard/CreateTaskModal'
 import DashboardHeader from './dashboard/DashboardHeader'
 import DashboardWelcome from './dashboard/DashboardWelcome'
 import TaskBoard from './dashboard/TaskBoard'
@@ -14,6 +16,7 @@ interface DashboardProps {
 
 export default function Dashboard({ user, onSessionExpired }: DashboardProps) {
   const board = useTaskBoard(onSessionExpired)
+  const [creatingTask, setCreatingTask] = useState(false)
 
   return <main className="dashboard-page">
     <div className="dashboard-shell">
@@ -27,11 +30,15 @@ export default function Dashboard({ user, onSessionExpired }: DashboardProps) {
         error={board.error}
         disabled={board.busy}
         pendingTaskIds={board.pendingTaskIds}
+        deletingTaskId={board.deletingTaskId}
+        editing={board.editing}
         moveAnnouncement={board.moveAnnouncement}
         boardRef={board.boardRef}
         drag={board.drag}
         onMoveTask={board.moveTask}
+        onDeleteTask={board.removeTask}
         onLoadPage={board.loadPage}
+        onCreateTask={() => setCreatingTask(true)}
       />
       <BoardSavePanel
         pendingCount={board.pendingCount}
@@ -43,5 +50,13 @@ export default function Dashboard({ user, onSessionExpired }: DashboardProps) {
       />
       <p className="dashboard-caption"><Icon name="sparkle" />Pequenos passos também te levam longe.</p>
     </div>
+    {creatingTask && <CreateTaskModal
+      onClose={() => setCreatingTask(false)}
+      onCreated={() => {
+        setCreatingTask(false)
+        board.taskCreated()
+      }}
+      onSessionExpired={onSessionExpired}
+    />}
   </main>
 }

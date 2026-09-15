@@ -41,6 +41,11 @@
 .board-symbol svg { width: 22px; height: 22px; }
 .board-title h2 { font-size: 18px; font-weight: 700; letter-spacing: -.5px; }
 .board-title p { margin-top: 5px; font-size: 11px; color: #8999a2; }
+.board-actions { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.create-task-button { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 9px 14px; border: 1px solid #172a34; border-radius: 8px; background: #172a34; color: #fff; font-size: 11px; font-weight: 600; white-space: nowrap; transition: background .18s; }
+.create-task-button:hover:not(:disabled) { background: #2b4a5a; border-color: #2b4a5a; }
+.create-task-button:disabled { opacity: .55; }
+.create-task-button svg { width: 15px; height: 15px; }
 .refresh-button { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 12px; min-height: 38px; border: 1px solid #e2ebef; border-radius: 8px; background: white; color: #526f7c; font-size: 11px; font-weight: 600; transition: background .18s; }
 .refresh-button:hover:not(:disabled) { background: #f1f7fa; }
 .refresh-button:disabled { opacity: .55; }
@@ -71,6 +76,12 @@
 .task-card[draggable="true"]:active { cursor: grabbing; }
 .task-card-heading { display: flex; align-items: flex-start; gap: 5px; }
 .task-card-heading h4 { flex: 1; min-width: 0; }
+.task-card-actions { display: flex; align-items: flex-start; gap: 3px; flex-shrink: 0; }
+.task-delete-button { display: grid; place-items: center; width: 28px; height: 28px; margin-top: -3px; padding: 0; border: 1px solid transparent; border-radius: 6px; background: transparent; color: #859da9; transition: color .18s, background .18s, border-color .18s; }
+.task-delete-button svg { width: 15px; height: 15px; }
+.task-delete-button:hover:not(:disabled), .task-delete-button:focus-visible { color: #ac5145; background: #fff2ef; border-color: #f1d5ce; }
+.task-delete-button:disabled { opacity: .45; cursor: default; }
+.task-delete-button[aria-busy='true'] { color: #5d8ba0; opacity: 1; }
 .task-grip { flex-shrink: 0; color: #a6bac5; padding-top: 2px; }
 .task-grip svg { width: 13px; height: 17px; }
 .task-is-dragging { opacity: .4; }
@@ -151,7 +162,9 @@
   .welcome-copy > p:last-child { font-size: 12px; max-width: 310px; }
   .welcome-postcard { display: none; }
   .board-panel { padding: 18px 14px 0; border-radius: 16px; }
-  .board-header { gap: 12px; }
+  .board-header { gap: 14px; flex-wrap: wrap; }
+  .board-actions { margin-left: auto; }
+  .create-task-button { min-height: 44px; padding-inline: 12px; font-size: 12px; }
   .board-title { gap: 9px; }
   .board-title h2 { font-size: 16px; }
   .board-symbol { width: 37px; height: 37px; border-radius: 10px; }
@@ -161,6 +174,8 @@
   .board-meta { margin: 20px 0 15px; align-items: flex-start; flex-direction: column; gap: 9px; }
   .task-board { grid-auto-columns: minmax(min(258px, 100%), 1fr); gap: 12px; }
   .task-card { padding: 16px 14px; }
+  .task-delete-button { width: 44px; height: 44px; margin-top: -8px; }
+  .task-delete-button svg { width: 18px; height: 18px; }
   .task-move-control select { min-height: 44px; font-size: 16px; }
   .board-save-panel { padding: 16px; }
   .board-save-bar { flex-direction: column; align-items: stretch; gap: 15px; }
